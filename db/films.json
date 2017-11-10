@@ -1,0 +1,22 @@
+{
+  "films": [
+    {
+      "name": "Harry Potter",
+      "year": 1111,
+      "genre": "Acción",
+      "voters": 11,
+      "totalVotes": 11,
+      "raiting": "1.00",
+      "id": 1
+    },
+    {
+      "name": "Rapido y furioso",
+      "year": 1234,
+      "genre": "Acción",
+      "voters": 222,
+      "totalVotes": 22222,
+      "raiting": "100.10",
+      "id": 2
+    }
+  ]
+}

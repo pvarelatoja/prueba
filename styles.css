@@ -1,0 +1,7 @@
+.clickable {
+    cursor: pointer;
+}
+
+#filmsTable td:last-child > span {
+    margin-right: 10px;
+}

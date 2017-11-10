@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+    <div class="jumbotron">
+        <div style="margin-left: 20px;">
+            <h1>Ejercicio cine</h1>
+            <p>Ejercicio para aprender a manipular el DOM, utilizar Bootstrap, y ya veremos.</p>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-push-3">
+                <form class="form-horizontal" id="addOrEditFilmsForm" action="" method="post" style="text-align: start;" onsubmit="addFilm(event, this)">
+                    <fieldset>
+                        <legend id="addOrEditFilmsFormLegend">Ingresar Películas</legend>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="filmName">Nombre:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="filmName" type="text" name="filmName" placeholder="Ingresar nombre de la película" required
+                                />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="filmYear">Año:</label>
+                            <div class="col-sm-10">
+                                <input class="form-control" id="filmYear" type="number" min="0" max="2500" name="filmYear" placeholder="Ingresar el año de la película"
+                                    required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filmGenre" class="control-label col-sm-2">Género:</label>
+                            <div class="col-sm-10">
+                                <select id="filmGenre" class="form-control" required>
+                                    <option value="Acción">Acción</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Ciencia Ficción">Ciencia Ficción</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filmVoters" class="control-label col-sm-2">Votantes:</label>
+                            <div class="col-sm-10">
+                                <input id="filmVoters" type="number" min="1" name="filmVoters" placeholder="Ingresar cantidad de votantes" class="form-control"
+                                    required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="filmTotalVotes" class="control-label col-sm-2">Total de votos:</label>
+                            <div class="col-sm-10">
+                                <input id="filmTotalVotes" type="number" min="1" name="filmTotalVotes" placeholder="Ingresar total de votos" class="form-control"
+                                    required />
+                            </div>
+                        </div>
+
+                        <div class="pull-right">
+                            <button class="btn btn-default" onclick="cleanAddFilmForm()">Limpiar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 10px">
+            <form id="filterFilmsForm" action="" method="post" onsubmit="filterFilms(event, this)" class="form-inline col-xs-12">
+                <fieldset>
+                    <legend>Películas</legend>
+
+                    <div class="form-group" data-toggle="tooltip" title="Escriba parte del nombre para filtrar">
+                        <label for="nameFilter">Nombre:</label>
+                        <input id="nameFilter" type="text" name="nameFilter" class="form-control" />
+                    </div>
+
+                    <div class="form-group" data-toggle="tooltip" title="Escriba un año para filtrar por menor al ingresado" style="margin-left: 10px;">
+                        <label for="yearFilter">Año:</label>
+                        <input id="yearFilter" type="number" min="0" name="yearFilter" class="form-control" />
+                    </div>
+
+                    <div class="form-group" data-toggle="tooltip" title="Seleccione un género para filtrar" style="margin-left: 10px;">
+                        <label for="genreFilter">Género:</label>
+                        <select id="genreFilter" class="form-control">
+                            <option value="nofilter">No filtrar</option>
+                            <option value="Acción">Acción</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Ciencia Ficción">Ciencia Ficción</option>
+                        </select>
+                    </div>
+                    <div class="form-group" data-toggle="tooltip" title="Escriba un puntaje para filtrar por menor al ingresado" style="margin-left: 10px;">
+                        <label for="raitingFilter">Puntaje:</label>
+                        <input id="raitingFilter" name="raitingFilter" type="number" min="0" class="form-control" />
+                    </div>
+
+                    <div class="pull-right">
+                        <button class="btn btn-default" onclick="cleanFiltersAndReRender()">Limpiar</button>
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-responsive">
+                    <table id="filmsTable" class="table table-bordered">
+                        <col width="20%" />
+                        <col width="20%" />
+                        <col width="20%" />
+                        <col width="20%" />
+                        <col width="20%" />
+                        <thead>
+                            <tr>
+                                <th>
+                                    Nombre
+                                    <span id="orderByNameIcon" class="glyphicon glyphicon-sort-by-alphabet-alt pull-right clickable" onclick="orderByName()"></span>
+                                </th>
+                                <th>
+                                    Año
+                                </th>
+                                <th>
+                                    Género
+                                </th>
+                                <th>
+                                    Puntaje
+                                </th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filmsTableBody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="services/filmsService.js"></script>
+    <script src="index.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+</body>
+
+</html>
